@@ -1,0 +1,19 @@
+includes:
+	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
+	- vendor/phpstan/phpstan-phpunit/extension.neon
+	- vendor/phpstan/phpstan-webmozart-assert/extension.neon
+	- vendor/phpstan/phpstan-mockery/extension.neon
+
+parameters:
+	level: max
+	tmpDir: ./tmp/phpstan
+
+	paths:
+		- src
+		- tests
+
+	ignoreErrors:
+		# There's no extension for that :(
+		-
+			message: '#Call to an undefined method Pest\\Expectation|Pest\\Support\\Extendable::#i'
+			path: 'tests/*Test.php'
