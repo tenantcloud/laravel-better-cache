@@ -57,6 +57,7 @@ jobs:
                 run: composer test -- --colors=always
                 env:
                     REDIS_CLIENT: ${{ matrix.redis-client }}
+                    REDIS_HOST: localhost
                     REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
 
     php-cs-fixer:
