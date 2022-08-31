@@ -1,0 +1,10 @@
+services:
+    redis:
+        image: redis:5.0-alpine
+        restart: always
+        networks:
+            - tests
+
+networks:
+    tests:
+        name: "${COMPOSE_PROJECT_NAME:-laravel-better-cache}-network"

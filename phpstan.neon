@@ -1,19 +1,26 @@
 includes:
-	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/phpstan/phpstan-webmozart-assert/extension.neon
 	- vendor/phpstan/phpstan-mockery/extension.neon
 
 parameters:
-	level: max
+	level: 6
 	tmpDir: ./tmp/phpstan
 
 	paths:
 		- src
-		- tests
 
 	ignoreErrors:
-		# There's no extension for that :(
+		# Bad typehints. It isn't always true.
 		-
-			message: '#Call to an undefined method Pest\\Expectation|Pest\\Support\\Extendable::#i'
-			path: 'tests/*Test.php'
+			message: '#Ternary operator condition is always true.#i'
+			path: 'src/TenantCloud/LaravelBetterCache/Redis/BetterRedisStore.php'
+		# Closure is bound to $this, but PHPStan doesn't pick up on this.
+		- '#Call to protected method getPrefix\(\) of class Illuminate\\Cache\\CacheManager#i'
+		# Yes, it isn't compatible. RedisTaggedCache doesn't expose any new APIs, I don't know why it exists.
+		- '#Return type \(TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache\) of method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisStore::tags\(\) should be compatible with return type \(Illuminate\\Cache\\RedisTaggedCache\) of method Illuminate\\Cache\\RedisStore::tags\(\)#'
+		- '#Call to an undefined method Illuminate\\Redis\\Connections\\Connection::scan\(\)#i'
+		- '#Call to an undefined method Illuminate\\Cache\\TagSet::(addEntry|entries|flushValues|flushStale)\(\)#i'
+		- '#Call to an undefined method Illuminate\\Contracts\\Cache\\(Repository|Store)::(tagKey|tagList|tags|flushStale|connection)\(\)#i'
+		# Overwritten
+		- '#Method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache::put\(\) has parameter \$key with no value type specified in iterable type array.#i'

@@ -1,9 +1,10 @@
 {
-	"name": "tenantcloud/composer-package",
-	"description": "A template for composer packages",
+	"name": "tenantcloud/laravel-better-cache",
+	"description": "Improvements for Laravel's cache",
 	"license": "MIT",
 	"require": {
-		"php": ">=8.1"
+		"php": ">=8.1",
+		"illuminate/cache": "^9.0"
 	},
 	"require-dev": {
 		"pestphp/pest": "^1.0",
@@ -12,7 +13,9 @@
 		"phpstan/phpstan": "^1.0",
 		"phpstan/phpstan-phpunit": "^1.0",
 		"phpstan/phpstan-webmozart-assert": "^1.0",
-		"phpstan/phpstan-mockery": "^1.0"
+		"phpstan/phpstan-mockery": "^1.0",
+		"orchestra/testbench": "^7.7",
+		"predis/predis": "^2.0"
 	},
 	"autoload": {
 		"psr-0": {
@@ -27,13 +30,21 @@
 	"scripts": {
 		"test": "./vendor/bin/pest",
 		"cs-fix": "./vendor/bin/php-cs-fixer fix -v --show-progress=dots",
-		"phpstan":  "./vendor/bin/phpstan analyse"
+		"phpstan":  "./vendor/bin/phpstan analyse",
+		"testbench": "./vendor/bin/testbench"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"config": {
 		"allow-plugins": {
 			"pestphp/pest-plugin": true
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"TenantCloud\\LaravelBetterCache\\BetterCacheServiceProvider"
+			]
 		}
 	}
 }
