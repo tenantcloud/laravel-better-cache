@@ -3,6 +3,7 @@
 namespace Tests\Unit\TenantCloud\LaravelBetterCache\Console;
 
 use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\NullStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store;
 use Mockery;
@@ -35,7 +36,7 @@ class FlushStaleCommandTest extends TestCase
 
 	public function testFailsGracefullyWhenFlushingStaleIsNotSupported(): void
 	{
-		$store = new Repository(Mockery::mock(Store::class));
+		$store = new Repository(new NullStore());
 
 		$this->mock(CacheManager::class)
 			->expects('store')

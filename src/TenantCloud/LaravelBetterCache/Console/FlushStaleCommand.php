@@ -2,10 +2,11 @@
 
 namespace TenantCloud\LaravelBetterCache\Console;
 
-use BadMethodCallException;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Tests\Unit\TenantCloud\LaravelBetterCache\Console\FlushStaleCommandTest;
+use Throwable;
 
 /**
  * @see FlushStaleCommandTest
@@ -41,7 +42,11 @@ class FlushStaleCommand extends Command
 
 		try {
 			$repository->flushStale();
-		} catch (BadMethodCallException) {
+		} catch (Throwable $e) {
+			if (!Str::is('Call to undefined method *::flushStale()', $e->getMessage())) {
+				throw $e;
+			}
+
 			$this->warn('Given store does not support flushing stale data. Make sure the correct store name was given.');
 
 			return 1;
