@@ -24,6 +24,16 @@ class TestCase extends BaseTestCase
 	{
 		parent::resolveApplicationConfiguration($app);
 
-		$app['config']['cache.stores.redis.driver'] = 'better_redis';
+		$app['config']->set('cache.stores.redis.driver', 'better_redis');
+
+		$app['config']->set('database.redis.failing_cache', $app['config']->get('database.redis.cache'));
+		$app['config']->set('database.redis.failing_cache.host', $app['config']->get('database.redis.failing_cache.host') . 'sad');
+		$app['config']->set('cache.stores.redis_fail_safe', [
+			'driver'   => 'fail_safe',
+			'delegate' => [
+				'driver'     => 'better_redis',
+				'connection' => 'failing_cache',
+			],
+		]);
 	}
 }

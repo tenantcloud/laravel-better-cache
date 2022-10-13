@@ -2,10 +2,14 @@
 
 namespace TenantCloud\LaravelBetterCache;
 
+use Exception;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 use TenantCloud\LaravelBetterCache\Console\FlushStaleCommand;
+use TenantCloud\LaravelBetterCache\FailSafe\FailSafeRepository;
 use TenantCloud\LaravelBetterCache\Redis\BetterRedisStore;
 
 class BetterCacheServiceProvider extends ServiceProvider
@@ -16,17 +20,37 @@ class BetterCacheServiceProvider extends ServiceProvider
 	public function register(): void
 	{
 		$this->app->booting(function () {
-			$this->app->make(CacheManager::class)
-				->extend('better_redis', function (Container $app, array $config) {
-					/** @var CacheManager $this */
-					$connection = $config['connection'] ?? 'default';
+			$cacheManager = $this->app->make(CacheManager::class);
 
-					$store = new BetterRedisStore($app['redis'], $this->getPrefix($config), $connection);
+			$cacheManager->extend('better_redis', function (Container $app, array $config) {
+				/** @var CacheManager $this */
+				$connection = $config['connection'] ?? 'default';
 
-					return $this->repository(
-						$store->setLockConnection($config['lock_connection'] ?? $connection)
-					);
-				});
+				$store = new BetterRedisStore($app['redis'], $this->getPrefix($config), $connection);
+
+				return $this->repository(
+					$store->setLockConnection($config['lock_connection'] ?? $connection)
+				);
+			});
+			$cacheManager->extend('fail_safe', function (Container $app, array $config) {
+				/** @var CacheManager $this */
+				if (isset($this->customCreators[$config['delegate']['driver']])) {
+					$delegate = $this->callCustomCreator($config['delegate']);
+				} else {
+					$driverMethod = 'create' . ucfirst($config['delegate']['driver']) . 'Driver';
+
+					if (method_exists($this, $driverMethod)) {
+						$delegate = $this->{$driverMethod}($config['delegate']);
+					} else {
+						throw new InvalidArgumentException("Driver [{$config['delegate']['driver']}] is not supported.");
+					}
+				}
+
+				return new FailSafeRepository(
+					$delegate,
+					fn (Exception $e) => $app->make(ExceptionHandler::class)->report($e)
+				);
+			});
 		});
 	}
 
