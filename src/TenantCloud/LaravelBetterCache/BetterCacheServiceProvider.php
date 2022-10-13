@@ -5,9 +5,9 @@ namespace TenantCloud\LaravelBetterCache;
 use Exception;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use TenantCloud\LaravelBetterCache\Console\FlushStaleCommand;
 use TenantCloud\LaravelBetterCache\FailSafe\FailSafeRepository;
 use TenantCloud\LaravelBetterCache\Redis\BetterRedisStore;
@@ -48,7 +48,9 @@ class BetterCacheServiceProvider extends ServiceProvider
 
 				return new FailSafeRepository(
 					$delegate,
-					fn (Exception $e) => $app->make(ExceptionHandler::class)->report($e)
+					fn (Exception $e) => $app->make(LoggerInterface::class)->error($e->getMessage(), [
+						'exception' => $e,
+					])
 				);
 			});
 		});
