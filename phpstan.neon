@@ -18,10 +18,11 @@ parameters:
 		# Closure is bound to $this, but PHPStan doesn't pick up on this.
 		- '#Call to protected method (getPrefix|callCustomCreator)\(\) of class Illuminate\\Cache\\CacheManager#i'
 		# Those aren't part of the interface, but they are publicly exposed in Repository implementation
-		- '#Call to an undefined method Illuminate\\Contracts\\Cache\\Repository::(many|putMany|tagList|entries)#i'
+		- '#Call to an undefined method Illuminate\\Cache\\Repository::(many|putMany|flushStale|tagList|entries)#i'
 		# No it's not assigned, PHPStan is just wrong.
 		- '#Readonly property TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::\$delegate is assigned outside of the constructor#i'
 		# Yes, it isn't compatible. RedisTaggedCache doesn't expose any new APIs, I don't know why it exists.
+		- '#Return type \(TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository\) of method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::tags\(\) should be compatible with return type \(Illuminate\\Cache\\TaggedCache\) of method Illuminate\\Cache\\Repository::tags\(\)#i'
 		- '#Return type \(TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache\) of method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisStore::tags\(\) should be compatible with return type \(Illuminate\\Cache\\RedisTaggedCache\) of method Illuminate\\Cache\\RedisStore::tags\(\)#'
 		- '#Call to an undefined method Illuminate\\Redis\\Connections\\Connection::scan\(\)#i'
 		- '#Call to an undefined method Illuminate\\Cache\\TagSet::(addEntry|entries|flushValues|flushStale)\(\)#i'

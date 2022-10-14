@@ -2,13 +2,12 @@
 
 namespace TenantCloud\LaravelBetterCache\FailSafe;
 
-use ArrayAccess;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Generator;
-use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Contracts\Cache\Store;
+use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Traits\ForwardsCalls;
 use RuntimeException;
@@ -16,11 +15,14 @@ use Tests\Integration\FailSafeRepositoryTest;
 use Throwable;
 
 /**
- * @see FailSafeRepositoryTest
+ * Secures all cache operations to be fail-safe.
  *
- * @implements ArrayAccess<mixed, mixed>
+ * Unfortunately, due to a bad design of Laravel, we have to extend Repository (instead of implementing it)
+ * because there are typehints inside Laravel itself that require Repository impl (not contract).
+ *
+ * @see FailSafeRepositoryTest
  */
-class FailSafeRepository implements Repository, ArrayAccess
+class FailSafeRepository extends Repository
 {
 	use ForwardsCalls;
 
@@ -28,22 +30,24 @@ class FailSafeRepository implements Repository, ArrayAccess
 		private readonly Repository $delegate,
 		private readonly Closure $reportFail,
 	) {
+		parent::__construct($this->delegate->getStore());
 	}
 
 	/**
 	 * Forward any custom methods to the original repository. We can't put a try-catch here because we don't know the expected return type.
 	 *
-	 * @param array<int, mixed> $arguments
+	 * @param array<int, mixed> $parameters
+	 * @param mixed             $method
 	 */
-	public function __call(string $name, array $arguments): mixed
+	public function __call($method, $parameters): mixed
 	{
-		return $this->forwardCallTo($this->delegate, $name, $arguments);
+		return $this->forwardCallTo($this->delegate, $method, $parameters);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function has(string $key): bool
+	public function has($key): bool
 	{
 		return $this->wrap(
 			fn () => $this->delegate->has($key),
@@ -55,15 +59,17 @@ class FailSafeRepository implements Repository, ArrayAccess
 	/**
 	 * @inheritDoc
 	 */
-	public function missing(string $key): bool
+	public function missing($key): bool
 	{
 		return !$this->has($key);
 	}
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @param string|array<int|string, mixed> $key
 	 */
-	public function get(string $key, mixed $default = null): mixed
+	public function get($key, mixed $default = null): mixed
 	{
 		return $this->wrap(
 			fn () => $this->delegate->get($key, $default),
@@ -95,8 +101,10 @@ class FailSafeRepository implements Repository, ArrayAccess
 	 * @inheritDoc
 	 *
 	 * @param iterable<int, string> $keys
+	 *
+	 * @return iterable<string, mixed>
 	 */
-	public function getMultiple(iterable $keys, mixed $default = null): iterable
+	public function getMultiple($keys, mixed $default = null): iterable
 	{
 		return $this->wrap(
 			fn () => $this->delegate->getMultiple($keys, $default),
@@ -107,6 +115,8 @@ class FailSafeRepository implements Repository, ArrayAccess
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @param string|array<string, mixed> $key
 	 */
 	public function put($key, $value, $ttl = null): mixed
 	{
@@ -120,7 +130,7 @@ class FailSafeRepository implements Repository, ArrayAccess
 	/**
 	 * @inheritDoc
 	 */
-	public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+	public function set($key, $value, $ttl = null): bool
 	{
 		return $this->put($key, $value, $ttl);
 	}
@@ -148,7 +158,7 @@ class FailSafeRepository implements Repository, ArrayAccess
 	 *
 	 * @param iterable<string, mixed> $values
 	 */
-	public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+	public function setMultiple($values, $ttl = null): bool
 	{
 		return $this->wrap(
 			fn () => $this->delegate->setMultiple($values, $ttl),
@@ -264,7 +274,7 @@ class FailSafeRepository implements Repository, ArrayAccess
 	/**
 	 * @inheritDoc
 	 */
-	public function delete(string $key): bool
+	public function delete($key): bool
 	{
 		return $this->forget($key);
 	}
@@ -272,7 +282,7 @@ class FailSafeRepository implements Repository, ArrayAccess
 	/**
 	 * @inheritDoc
 	 */
-	public function deleteMultiple(iterable $keys): bool
+	public function deleteMultiple($keys): bool
 	{
 		return $this->wrap(
 			fn () => $this->delegate->deleteMultiple($keys),
@@ -320,7 +330,7 @@ class FailSafeRepository implements Repository, ArrayAccess
 	 *
 	 * @param string|array<string> $names
 	 */
-	public function tags(...$names): Repository
+	public function tags(...$names): self
 	{
 		return new self(
 			$this->delegate->tags($names),
@@ -433,9 +443,51 @@ class FailSafeRepository implements Repository, ArrayAccess
 	/**
 	 * @inheritDoc
 	 */
-	public function getStore(): Store
+	public function supportsTags()
+	{
+		return $this->delegate->supportsTags();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultCacheTime()
+	{
+		return $this->delegate->getDefaultCacheTime();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setDefaultCacheTime($seconds)
+	{
+		$this->delegate->setDefaultCacheTime($seconds);
+
+		return $this;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getStore()
 	{
 		return $this->delegate->getStore();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getEventDispatcher()
+	{
+		return $this->delegate->getEventDispatcher();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setEventDispatcher(Dispatcher $events)
+	{
+		$this->delegate->setEventDispatcher($events);
 	}
 
 	/**
