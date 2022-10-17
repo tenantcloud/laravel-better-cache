@@ -333,7 +333,7 @@ class FailSafeRepository extends Repository
 	public function tags(...$names): self
 	{
 		return new self(
-			$this->delegate->tags($names),
+			$this->delegate->tags(...$names),
 			$this->reportFail
 		);
 	}
