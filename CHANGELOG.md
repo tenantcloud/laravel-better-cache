@@ -1,3 +1,10 @@
+# [1.0.0-alpha.2](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-10-24)
+
+
+### Features
+
+* Fail safe driver ([#1](https://github.com/tenantcloud/laravel-better-cache/issues/1)) ([97d9054](https://github.com/tenantcloud/laravel-better-cache/commit/97d9054df08980bc69491fbb592d01e6cba2eb7c))
+
 # 1.0.0-alpha.1 (2022-08-31)
 
 
