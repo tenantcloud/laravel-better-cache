@@ -1,3 +1,11 @@
+# [1.0.0-alpha.3](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* Cache::tags()->flush() clearing the whole cache ([#2](https://github.com/tenantcloud/laravel-better-cache/issues/2)) ([b9ca72c](https://github.com/tenantcloud/laravel-better-cache/commit/b9ca72c9a5b7c7fd319501cc7fead3a7e98f467e))
+* Semantic release failing ([#3](https://github.com/tenantcloud/laravel-better-cache/issues/3)) ([1011327](https://github.com/tenantcloud/laravel-better-cache/commit/10113275e52c76fe2e525b1aea95d5f6276ccd22))
+
 # [1.0.0-alpha.2](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-10-24)
 
 
