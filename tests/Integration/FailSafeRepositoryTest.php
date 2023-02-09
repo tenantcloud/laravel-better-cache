@@ -251,7 +251,7 @@ class FailSafeRepositoryTest extends TestCase
 	{
 		$this->store->tags('test1', 'test2')->put('key', 'asd');
 
-		self::assertSame(['test1', 'test2'], $this->store->tagList()->all());
+		self::assertEqualsCanonicalizing(['test1', 'test2'], $this->store->tagList()->all());
 	}
 
 	public function testTags(): void
