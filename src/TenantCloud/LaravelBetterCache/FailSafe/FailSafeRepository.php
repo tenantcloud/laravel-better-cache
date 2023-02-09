@@ -11,6 +11,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Traits\ForwardsCalls;
 use RuntimeException;
+use Tests\Integration\FailingFailSafeRepositoryTest;
 use Tests\Integration\FailSafeRepositoryTest;
 use Throwable;
 
@@ -21,6 +22,7 @@ use Throwable;
  * because there are typehints inside Laravel itself that require Repository impl (not contract).
  *
  * @see FailSafeRepositoryTest
+ * @see FailingFailSafeRepositoryTest
  */
 class FailSafeRepository extends Repository
 {
@@ -305,7 +307,7 @@ class FailSafeRepository extends Repository
 	public function flush(): bool
 	{
 		return $this->wrap(
-			fn () => $this->delegate->clear(),
+			fn () => $this->delegate->flush(),
 			'flush cache',
 			false
 		);

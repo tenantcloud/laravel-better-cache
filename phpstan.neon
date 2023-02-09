@@ -17,6 +17,7 @@ parameters:
 			path: 'src/TenantCloud/LaravelBetterCache/Redis/BetterRedisStore.php'
 		# Closure is bound to $this, but PHPStan doesn't pick up on this.
 		- '#Call to protected method (getPrefix|callCustomCreator)\(\) of class Illuminate\\Cache\\CacheManager#i'
+		- '#Method Illuminate\\Contracts\\Cache\\Store::getPrefix\(\) invoked with 1 parameter, 0 required#i'
 		# Those aren't part of the interface, but they are publicly exposed in Repository implementation
 		- '#Call to an undefined method Illuminate\\Cache\\Repository::(many|putMany|flushStale|tagList|entries)#i'
 		# No it's not assigned, PHPStan is just wrong.
@@ -29,3 +30,6 @@ parameters:
 		- '#Call to an undefined method Illuminate\\Contracts\\Cache\\(Repository|Store)::(tagKey|tagList|tags|flushStale|connection)\(\)#i'
 		# Overwritten
 		- '#Method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache::put\(\) has parameter \$key with no value type specified in iterable type array.#i'
+		- '#Method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::has\(\) has parameter \$key with no value type specified in iterable type array.#i'
+		- '#Method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::pull\(\) has parameter \$key with no value type specified in iterable type array.#i'
+		- '#Conditional return type uses subject type TCacheValue which is not part of PHPDoc @template tags.#i'

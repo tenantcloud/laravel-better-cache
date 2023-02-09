@@ -1,4 +1,21 @@
 services:
+    cli:
+        image: webdevops/php-dev:8.1-alpine
+        restart: "no"
+        command: /bin/true
+        working_dir: /app
+        depends_on:
+            - redis
+        volumes:
+            - ./:/app
+        networks:
+            - tests
+        deploy:
+            replicas: 0
+            resources:
+                limits:
+                    memory: 4G
+
     redis:
         image: redis:5.0-alpine
         restart: always
