@@ -35,20 +35,6 @@ class FailSafeRepository extends Repository
 		parent::__construct($this->delegate->getStore());
 	}
 
-	/**
-	 * Forward any custom methods to the original repository. We can't put a try-catch here because we don't know the expected return type.
-	 *
-	 * @param array<int, mixed> $parameters
-	 * @param mixed             $method
-	 */
-	public function __call($method, $parameters): mixed
-	{
-		return $this->forwardCallTo($this->delegate, $method, $parameters);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function has($key): bool
 	{
 		return $this->wrap(
@@ -58,17 +44,12 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function missing($key): bool
 	{
 		return !$this->has($key);
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param string|array<int|string, mixed> $key
 	 */
 	public function get($key, mixed $default = null): mixed
@@ -81,8 +62,6 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param array<int|string, mixed> $keys
 	 *
 	 * @return array<string, mixed>
@@ -100,8 +79,6 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param iterable<int, string> $keys
 	 *
 	 * @return iterable<string, mixed>
@@ -116,9 +93,8 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param string|array<string, mixed> $key
+	 * @param mixed|null                  $ttl
 	 */
 	public function put($key, $value, $ttl = null): mixed
 	{
@@ -129,17 +105,12 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function set($key, $value, $ttl = null): bool
 	{
 		return $this->put($key, $value, $ttl);
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param array<string, mixed>                    $values
 	 * @param DateTimeInterface|DateInterval|int|null $ttl
 	 */
@@ -156,9 +127,8 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param iterable<string, mixed> $values
+	 * @param mixed|null              $ttl
 	 */
 	public function setMultiple($values, $ttl = null): bool
 	{
@@ -169,9 +139,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function forever($key, $value): mixed
 	{
 		return $this->wrap(
@@ -181,9 +148,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function add($key, $value, $ttl = null): mixed
 	{
 		return $this->wrap(
@@ -193,9 +157,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function remember($key, $ttl, Closure $callback): mixed
 	{
 		return $this->wrap(
@@ -205,17 +166,11 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function sear($key, Closure $callback): mixed
 	{
 		return $this->rememberForever($key, $callback);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function rememberForever($key, Closure $callback): mixed
 	{
 		return $this->wrap(
@@ -225,9 +180,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function pull($key, $default = null): mixed
 	{
 		return $this->wrap(
@@ -237,9 +189,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function increment($key, $value = 1): mixed
 	{
 		return $this->wrap(
@@ -249,9 +198,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function decrement($key, $value = 1): mixed
 	{
 		return $this->wrap(
@@ -261,9 +207,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function forget($key): mixed
 	{
 		return $this->wrap(
@@ -273,17 +216,11 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function delete($key): bool
 	{
 		return $this->forget($key);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function deleteMultiple($keys): bool
 	{
 		return $this->wrap(
@@ -293,17 +230,11 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function clear(): bool
 	{
 		return $this->flush();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function flush(): bool
 	{
 		return $this->wrap(
@@ -313,9 +244,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function flushStale(): void
 	{
 		$this->wrap(
@@ -328,8 +256,6 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @param string|array<string> $names
 	 */
 	public function tags(...$names): self
@@ -341,8 +267,6 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @return LazyCollection<int, string>
 	 */
 	public function tagList(int $chunkSize = 1000): LazyCollection
@@ -366,8 +290,6 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @inheritDoc
-	 *
 	 * @return LazyCollection<int, string>
 	 */
 	public function entries(int $chunkSize = 1000): LazyCollection
@@ -390,9 +312,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function offsetExists($key): bool
 	{
 		return $this->wrap(
@@ -402,9 +321,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function offsetGet($key): mixed
 	{
 		return $this->wrap(
@@ -414,9 +330,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function offsetSet($key, $value): void
 	{
 		$this->wrap(
@@ -428,9 +341,6 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function offsetUnset($key): void
 	{
 		$this->wrap(
@@ -442,25 +352,16 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function supportsTags()
 	{
 		return $this->delegate->supportsTags();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getDefaultCacheTime()
 	{
 		return $this->delegate->getDefaultCacheTime();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setDefaultCacheTime($seconds)
 	{
 		$this->delegate->setDefaultCacheTime($seconds);
@@ -468,25 +369,16 @@ class FailSafeRepository extends Repository
 		return $this;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getStore()
 	{
 		return $this->delegate->getStore();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getEventDispatcher()
 	{
 		return $this->delegate->getEventDispatcher();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setEventDispatcher(Dispatcher $events)
 	{
 		$this->delegate->setEventDispatcher($events);
@@ -509,5 +401,15 @@ class FailSafeRepository extends Repository
 
 			return value($return);
 		}
+	}
+
+	/**
+	 * Forward any custom methods to the original repository. We can't put a try-catch here because we don't know the expected return type.
+	 *
+	 * @param array<int, mixed> $parameters
+	 */
+	public function __call($method, $parameters): mixed
+	{
+		return $this->forwardCallTo($this->delegate, $method, $parameters);
 	}
 }

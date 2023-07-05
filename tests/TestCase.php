@@ -10,9 +10,6 @@ class TestCase extends BaseTestCase
 {
 	use WithFaker;
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getPackageProviders($app): array
 	{
 		return [

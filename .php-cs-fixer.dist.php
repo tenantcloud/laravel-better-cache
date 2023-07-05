@@ -1,22 +1,18 @@
 <?php
 
-require __DIR__ . '/vendor/tenantcloud/php-cs-fixer-rule-sets/src/TenantCloud/PhpCsFixer/RuleSet/TenantCloudSet.php';
+require __DIR__ . '/vendor/kubawerlos/php-cs-fixer-custom-fixers/bootstrap.php';
+require __DIR__ . '/vendor/tenantcloud/php-cs-fixer-rule-sets/bootstrap.php';
 
-use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
-use TenantCloud\PhpCsFixer\RuleSet\TenantCloudSet;
+use TenantCloud\PhpCsFixer\Config;
 
 $finder = Finder::create()
-	->in('src')
-	->in('tests')
+	->in(__DIR__)
+	->exclude('build')
+	->exclude('tmp')
+	->exclude('vendor')
 	->name('*.php')
 	->notName('_*.php')
 	->ignoreVCS(true);
 
-return (new Config())
-	->setFinder($finder)
-	->setRiskyAllowed(true)
-	->setIndent("\t")
-	->setRules([
-		...(new TenantCloudSet())->rules(),
-	]);
+return Config::make()->setFinder($finder);

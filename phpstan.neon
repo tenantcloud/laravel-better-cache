@@ -2,6 +2,7 @@ includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/phpstan/phpstan-webmozart-assert/extension.neon
 	- vendor/phpstan/phpstan-mockery/extension.neon
+	- vendor/nunomaduro/larastan/extension.neon
 
 parameters:
 	level: 6
@@ -14,7 +15,7 @@ parameters:
 		# Bad typehints. It isn't always true.
 		-
 			message: '#Ternary operator condition is always true.#i'
-			path: 'src/TenantCloud/LaravelBetterCache/Redis/BetterRedisStore.php'
+			path: 'src/Redis/BetterRedisStore.php'
 		# Closure is bound to $this, but PHPStan doesn't pick up on this.
 		- '#Call to protected method (getPrefix|callCustomCreator)\(\) of class Illuminate\\Cache\\CacheManager#i'
 		- '#Method Illuminate\\Contracts\\Cache\\Store::getPrefix\(\) invoked with 1 parameter, 0 required#i'
@@ -25,11 +26,12 @@ parameters:
 		# Yes, it isn't compatible. RedisTaggedCache doesn't expose any new APIs, I don't know why it exists.
 		- '#Return type \(TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository\) of method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::tags\(\) should be compatible with return type \(Illuminate\\Cache\\TaggedCache\) of method Illuminate\\Cache\\Repository::tags\(\)#i'
 		- '#Return type \(TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache\) of method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisStore::tags\(\) should be compatible with return type \(Illuminate\\Cache\\RedisTaggedCache\) of method Illuminate\\Cache\\RedisStore::tags\(\)#'
-		- '#Call to an undefined method Illuminate\\Redis\\Connections\\Connection::scan\(\)#i'
 		- '#Call to an undefined method Illuminate\\Cache\\TagSet::(addEntry|entries|flushValues|flushStale)\(\)#i'
 		- '#Call to an undefined method Illuminate\\Contracts\\Cache\\(Repository|Store)::(tagKey|tagList|tags|flushStale|connection)\(\)#i'
+		- '#Parameter \#2 \$pattern of method Redis::scan\(\) expects string\|null, array<string, int\|string> given\.#'
+		- '#Strict comparison using === between string and null will always evaluate to false\.#'
+		- '#Parameter \#1 \$array of function array_unique expects array, string given\.#'
 		# Overwritten
 		- '#Method TenantCloud\\LaravelBetterCache\\Redis\\BetterRedisTaggedCache::put\(\) has parameter \$key with no value type specified in iterable type array.#i'
 		- '#Method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::has\(\) has parameter \$key with no value type specified in iterable type array.#i'
 		- '#Method TenantCloud\\LaravelBetterCache\\FailSafe\\FailSafeRepository::pull\(\) has parameter \$key with no value type specified in iterable type array.#i'
-		- '#Conditional return type uses subject type TCacheValue which is not part of PHPDoc @template tags.#i'

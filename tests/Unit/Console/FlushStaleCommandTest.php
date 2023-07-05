@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\TenantCloud\LaravelBetterCache\Console;
+namespace Tests\Unit\Console;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Cache\NullStore;

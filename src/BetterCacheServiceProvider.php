@@ -14,9 +14,6 @@ use TenantCloud\LaravelBetterCache\Redis\BetterRedisStore;
 
 class BetterCacheServiceProvider extends ServiceProvider
 {
-	/**
-	 * @inheritDoc
-	 */
 	public function register(): void
 	{
 		$this->app->booting(function () {
@@ -56,9 +53,6 @@ class BetterCacheServiceProvider extends ServiceProvider
 		});
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function boot(): void
 	{
 		if ($this->app->runningInConsole()) {

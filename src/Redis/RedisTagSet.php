@@ -11,9 +11,6 @@ use Tests\Integration\BetterRedisStoreTest;
  */
 class RedisTagSet extends TagSet
 {
-	/**
-	 * @inheritDoc
-	 */
 	public function resetTag($name): string
 	{
 		$this->store->forget($this->tagKey($name));
@@ -21,25 +18,16 @@ class RedisTagSet extends TagSet
 		return $this->tagId($name);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function flushTag($name): void
 	{
 		$this->resetTag($name);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function tagId($name): string
 	{
 		return $this->tagKey($name);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function tagKey($name): string
 	{
 		return $this->store->tagKey($name);
