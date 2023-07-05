@@ -14,9 +14,6 @@ use Tests\Integration\BetterRedisStoreTest;
  */
 class BetterRedisStore extends RedisStore
 {
-	/**
-	 * @inheritDoc
-	 */
 	public function tags($names): BetterRedisTaggedCache
 	{
 		return new BetterRedisTaggedCache(

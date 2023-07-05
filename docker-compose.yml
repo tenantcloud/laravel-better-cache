@@ -1,9 +1,11 @@
 services:
     cli:
-        image: webdevops/php-dev:8.1-alpine
+        image: webdevops/php-dev:8.2-alpine
         restart: "no"
         command: /bin/true
         working_dir: /app
+        environment:
+            REDIS_HOST: redis
         depends_on:
             - redis
         volumes:

@@ -11,9 +11,6 @@ use Tests\Integration\BetterRedisStoreTest;
  */
 class BetterRedisTaggedCache extends TaggedCache
 {
-	/**
-	 * @inheritDoc
-	 */
 	public function put($key, $value, $ttl = null)
 	{
 		if ($ttl === null) {
@@ -25,9 +22,6 @@ class BetterRedisTaggedCache extends TaggedCache
 		return parent::put($key, $value, $ttl);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function forever($key, $value)
 	{
 		$this->tags->addEntry($this->itemKey($key));
@@ -35,9 +29,6 @@ class BetterRedisTaggedCache extends TaggedCache
 		return parent::forever($key, $value);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function increment($key, $value = 1)
 	{
 		$this->tags->addEntry($this->itemKey($key));
@@ -45,9 +36,6 @@ class BetterRedisTaggedCache extends TaggedCache
 		return parent::increment($key, $value);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function decrement($key, $value = 1)
 	{
 		$this->tags->addEntry($this->itemKey($key));
@@ -55,9 +43,6 @@ class BetterRedisTaggedCache extends TaggedCache
 		return parent::decrement($key, $value);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function flush(): bool
 	{
 		$this->tags->flushValues();
