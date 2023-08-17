@@ -1,3 +1,10 @@
+# [1.0.0-alpha.4](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2023-08-17)
+
+
+### Bug Fixes
+
+* Remember not rethrowing errors from inside the callback ([#5](https://github.com/tenantcloud/laravel-better-cache/issues/5)) ([38f4445](https://github.com/tenantcloud/laravel-better-cache/commit/38f4445b610265df9829c52ea810225211bb11dc))
+
 # [1.0.0-alpha.3](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2023-02-09)
 
 
