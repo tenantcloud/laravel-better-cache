@@ -5,6 +5,7 @@ namespace Tests\Integration;
 use Carbon\CarbonInterval;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use TenantCloud\LaravelBetterCache\FailSafe\FailSafeRepository;
 use Tests\TestCase;
 use TiMacDonald\Log\LogFake;
@@ -152,11 +153,25 @@ class FailSafeRepositoryTest extends TestCase
 		self::assertNull($this->store->get('test2'));
 	}
 
+	public function testRememberThatThrows(): void
+	{
+		self::assertThrows(function () {
+			$this->store->remember('test1', CarbonInterval::minute(), fn () => throw new RuntimeException('Test'));
+		}, RuntimeException::class, 'Test');
+	}
+
 	public function testRememberForever(): void
 	{
 		self::assertSame('asd', $this->store->rememberForever('test', fn () => 'asd'));
 
 		self::assertSame('asd', $this->store->get('test'));
+	}
+
+	public function testRememberForeverThatThrows(): void
+	{
+		self::assertThrows(function () {
+			$this->store->rememberForever('test1', fn () => throw new RuntimeException('Test'));
+		}, RuntimeException::class, 'Test');
 	}
 
 	public function testPull(): void

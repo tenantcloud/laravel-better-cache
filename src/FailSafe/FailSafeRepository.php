@@ -159,11 +159,20 @@ class FailSafeRepository extends Repository
 
 	public function remember($key, $ttl, Closure $callback): mixed
 	{
-		return $this->wrap(
-			fn () => $this->delegate->remember($key, $ttl, $callback),
-			'remember items into cache',
-			fn () => $callback()
-		);
+		$value = $this->get($key);
+
+		// If the item exists in the cache we will just return this immediately and if
+		// not we will execute the given Closure and cache the result of that for a
+		// given number of seconds so it's available for all subsequent requests.
+		if ($value !== null) {
+			return $value;
+		}
+
+		$value = $callback();
+
+		$this->put($key, $value, value($ttl, $value));
+
+		return $value;
 	}
 
 	public function sear($key, Closure $callback): mixed
@@ -173,11 +182,18 @@ class FailSafeRepository extends Repository
 
 	public function rememberForever($key, Closure $callback): mixed
 	{
-		return $this->wrap(
-			fn () => $this->delegate->rememberForever($key, $callback),
-			'remember items into cache',
-			fn () => $callback()
-		);
+		$value = $this->get($key);
+
+		// If the item exists in the cache we will just return this immediately
+		// and if not we will execute the given Closure and cache the result
+		// of that forever so it is available for all subsequent requests.
+		if ($value !== null) {
+			return $value;
+		}
+
+		$this->forever($key, $value = $callback());
+
+		return $value;
 	}
 
 	public function pull($key, $default = null): mixed
