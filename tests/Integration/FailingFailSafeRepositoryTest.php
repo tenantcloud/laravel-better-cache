@@ -5,6 +5,7 @@ namespace Tests\Integration;
 use Carbon\CarbonInterval;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use TenantCloud\LaravelBetterCache\FailSafe\FailSafeRepository;
 use Tests\TestCase;
 use TiMacDonald\Log\LogEntry;
@@ -154,8 +155,27 @@ class FailingFailSafeRepositoryTest extends TestCase
 
 		$log->assertLogged(
 			fn (LogEntry $log) => $log->level === 'error' &&
-				$log->message === 'Failed to remember items into cache.'
+				$log->message === 'Failed to get items from cache.'
 		);
+		$log->assertLogged(
+			fn (LogEntry $log) => $log->level === 'error' &&
+				$log->message === 'Failed to put items into cache.'
+		);
+	}
+
+	public function testRememberThatThrows(): void
+	{
+		Log::swap($log = new LogFake());
+
+		self::assertThrows(function () {
+			$this->store->remember('test', CarbonInterval::minute(), fn () => throw new RuntimeException('Test'));
+		}, RuntimeException::class, 'Test');
+
+		$log->assertLogged(
+			fn (LogEntry $log) => $log->level === 'error' &&
+				$log->message === 'Failed to get items from cache.'
+		);
+		$log->assertLoggedTimes(fn (LogEntry $log) => $log->level === 'error', 1);
 	}
 
 	public function testRememberForever(): void
@@ -166,8 +186,27 @@ class FailingFailSafeRepositoryTest extends TestCase
 
 		$log->assertLogged(
 			fn (LogEntry $log) => $log->level === 'error' &&
-				$log->message === 'Failed to remember items into cache.'
+				$log->message === 'Failed to get items from cache.'
 		);
+		$log->assertLogged(
+			fn (LogEntry $log) => $log->level === 'error' &&
+				$log->message === 'Failed to put items into cache.'
+		);
+	}
+
+	public function testRememberForeverThatThrows(): void
+	{
+		Log::swap($log = new LogFake());
+
+		self::assertThrows(function () {
+			$this->store->rememberForever('test', fn () => throw new RuntimeException('Test'));
+		}, RuntimeException::class, 'Test');
+
+		$log->assertLogged(
+			fn (LogEntry $log) => $log->level === 'error' &&
+				$log->message === 'Failed to get items from cache.'
+		);
+		$log->assertLoggedTimes(fn (LogEntry $log) => $log->level === 'error', 1);
 	}
 
 	public function testPull(): void
