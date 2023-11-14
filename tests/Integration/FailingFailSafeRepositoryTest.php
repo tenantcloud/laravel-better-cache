@@ -295,27 +295,15 @@ class FailingFailSafeRepositoryTest extends TestCase
 		);
 	}
 
-	public function testFlushStale(): void
+	public function testFlushStaleTags(): void
 	{
 		Log::swap($log = new LogFake());
 
-		$this->store->flushStale();
+		$this->store->flushStaleTags();
 
 		$log->assertLogged(
 			fn (LogEntry $log) => $log->level === 'error' &&
-				$log->message === 'Failed to flush stale cache.'
-		);
-	}
-
-	public function testTagList(): void
-	{
-		Log::swap($log = new LogFake());
-
-		self::assertEmpty($this->store->tagList());
-
-		$log->assertLogged(
-			fn (LogEntry $log) => $log->level === 'error' &&
-				$log->message === 'Failed to get tag list from cache.'
+				$log->message === 'Failed to flush stale cache tags.'
 		);
 	}
 

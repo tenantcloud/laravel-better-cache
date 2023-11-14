@@ -257,16 +257,9 @@ class FailSafeRepositoryTest extends TestCase
 		self::assertFalse($this->store->has('test'));
 	}
 
-	public function testFlushStale(): void
+	public function testFlushStaleTags(): void
 	{
-		$this->store->flushStale();
-	}
-
-	public function testTagList(): void
-	{
-		$this->store->tags('test1', 'test2')->put('key', 'asd');
-
-		self::assertEqualsCanonicalizing(['test1', 'test2'], $this->store->tagList()->all());
+		$this->store->flushStaleTags();
 	}
 
 	public function testTags(): void
