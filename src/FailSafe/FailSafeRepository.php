@@ -260,13 +260,13 @@ class FailSafeRepository extends Repository
 		);
 	}
 
-	public function flushStale(): void
+	public function flushStaleTags(): void
 	{
 		$this->wrap(
 			function () {
-				$this->delegate->flushStale();
+				$this->delegate->flushStaleTags();
 			},
-			'flush stale cache',
+			'flush stale cache tags',
 			null
 		);
 	}
@@ -279,29 +279,6 @@ class FailSafeRepository extends Repository
 		return new self(
 			$this->delegate->tags(...$names),
 			$this->reportFail
-		);
-	}
-
-	/**
-	 * @return LazyCollection<int, string>
-	 */
-	public function tagList(int $chunkSize = 1000): LazyCollection
-	{
-		return $this->wrap(
-			function () use ($chunkSize) {
-				/** @var LazyCollection<int, string> $list */
-				$list = $this->delegate->tagList($chunkSize);
-
-				return LazyCollection::make(function () use ($list): Generator {
-					try {
-						yield from $list;
-					} catch (Throwable $e) {
-						($this->reportFail)(new RuntimeException('Failed to get tag list from cache.', previous: $e));
-					}
-				});
-			},
-			'get tag list from cache',
-			fn () => LazyCollection::empty()
 		);
 	}
 

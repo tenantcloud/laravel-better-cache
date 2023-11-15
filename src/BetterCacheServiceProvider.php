@@ -8,9 +8,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use TenantCloud\LaravelBetterCache\Console\FlushStaleCommand;
 use TenantCloud\LaravelBetterCache\FailSafe\FailSafeRepository;
-use TenantCloud\LaravelBetterCache\Redis\BetterRedisStore;
 
 class BetterCacheServiceProvider extends ServiceProvider
 {
@@ -19,16 +17,6 @@ class BetterCacheServiceProvider extends ServiceProvider
 		$this->app->booting(function () {
 			$cacheManager = $this->app->make(CacheManager::class);
 
-			$cacheManager->extend('better_redis', function (Container $app, array $config) {
-				/** @var CacheManager $this */
-				$connection = $config['connection'] ?? 'default';
-
-				$store = new BetterRedisStore($app['redis'], $this->getPrefix($config), $connection);
-
-				return $this->repository(
-					$store->setLockConnection($config['lock_connection'] ?? $connection)
-				);
-			});
 			$cacheManager->extend('fail_safe', function (Container $app, array $config) {
 				/** @var CacheManager $this */
 				if (isset($this->customCreators[$config['delegate']['driver']])) {
@@ -51,14 +39,5 @@ class BetterCacheServiceProvider extends ServiceProvider
 				);
 			});
 		});
-	}
-
-	public function boot(): void
-	{
-		if ($this->app->runningInConsole()) {
-			$this->commands([
-				FlushStaleCommand::class,
-			]);
-		}
 	}
 }
