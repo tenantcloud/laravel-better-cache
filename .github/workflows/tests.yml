@@ -10,12 +10,12 @@ jobs:
             fail-fast: true
             matrix:
                 php: [ 8.1, 8.2 ]
-                test-bench: [ ^7.0, ^8.0 ]
+                test-bench: [ ^8.15 ]
                 redis-client: [predis, phpredis]
 
         services:
             redis:
-                image: redis:5.0
+                image: redis:7.0
                 ports:
                     - 6379/tcp
                 options: --entrypoint redis-server
