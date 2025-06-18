@@ -1,3 +1,16 @@
+# [1.0.0-alpha.4](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2025-06-18)
+
+
+### Bug Fixes
+
+* Remember not rethrowing errors from inside the callback ([#5](https://github.com/tenantcloud/laravel-better-cache/issues/5)) ([38f4445](https://github.com/tenantcloud/laravel-better-cache/commit/38f4445b610265df9829c52ea810225211bb11dc))
+* Support for Laravel 11 ([2b5eae3](https://github.com/tenantcloud/laravel-better-cache/commit/2b5eae3a978b62ec8b5db89e93046b4b95158eb1))
+
+
+### Features
+
+* Template sync ([#8](https://github.com/tenantcloud/laravel-better-cache/issues/8)) ([19b1b39](https://github.com/tenantcloud/laravel-better-cache/commit/19b1b3955f2fdf37350ba1b1e5d463ddca9f5d14)), closes [#7](https://github.com/tenantcloud/laravel-better-cache/issues/7)
+
 # [1.0.0-alpha.4](https://github.com/tenantcloud/laravel-better-cache/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2024-05-14)
 
 
