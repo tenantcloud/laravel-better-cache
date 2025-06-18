@@ -272,7 +272,7 @@ class FailSafeRepository extends Repository
 	}
 
 	/**
-	 * @param string|array<string> $names
+	 * @param string|list<string> $names
 	 */
 	public function tags(...$names): self
 	{
